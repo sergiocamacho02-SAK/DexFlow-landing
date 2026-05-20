@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
        ========================================================================== */
     var form = document.getElementById('leadForm');
     var successEl = document.getElementById('success');
-    
+
     if (!form) return;
 
     var nombreInput = document.getElementById('name');
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Lead registrado en DexFlow');
         form.reset();
         clearAllErrors();
-        
+
         // Ocultar formulario y mostrar éxito
         form.classList.add('hidden');
         if (successEl) {
@@ -148,4 +148,31 @@ document.addEventListener('DOMContentLoaded', function () {
     emailInput.addEventListener('input', function () { if (errorVisible('email')) validateEmail(); });
     netSelect.addEventListener('change', function () { if (errorVisible('net')) validateNet(); });
     consentInput.addEventListener('change', function () { if (errorVisible('consent')) validateConsent(); });
+
+    /* ==========================================================================
+       3. PERSISTENCIA CON LOCALSTORAGE (Commit 7)
+       ========================================================================== */
+
+    // Función para guardar cuando el usuario escribe
+    function autoSave() {
+        localStorage.setItem('dexflow_name', nombreInput.value);
+        localStorage.setItem('dexflow_occ', occInput.value);
+        localStorage.setItem('dexflow_email', emailInput.value);
+    }
+
+    // Cargar datos al abrir la página
+    if (localStorage.getItem('dexflow_name')) nombreInput.value = localStorage.getItem('dexflow_name');
+    if (localStorage.getItem('dexflow_occ')) occInput.value = localStorage.getItem('dexflow_occ');
+    if (localStorage.getItem('dexflow_email')) emailInput.value = localStorage.getItem('dexflow_email');
+
+    // Escuchar cambios para guardar automáticamente
+    nombreInput.addEventListener('input', autoSave);
+    occInput.addEventListener('input', autoSave);
+    emailInput.addEventListener('input', autoSave);
+
+    // Limpiar localStorage al enviar el formulario exitosamente
+    form.addEventListener('submit', () => {
+        localStorage.clear();
+    });
+
 });
