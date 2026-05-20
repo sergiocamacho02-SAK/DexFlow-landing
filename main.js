@@ -171,8 +171,37 @@ document.addEventListener('DOMContentLoaded', function () {
     emailInput.addEventListener('input', autoSave);
 
     // Limpiar localStorage al enviar el formulario exitosamente
-    form.addEventListener('submit', () => {
-        localStorage.clear();
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        
+        // 1. Desactivar botón y cambiar texto
+        var submitBtn = form.querySelector('.btn--submit');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Procesando...';
+
+        if (successEl) successEl.classList.add('hidden');
+
+        var okNombre = validateNombre();
+        var okOcc = validateOccupation();
+        var okEmail = validateEmail();
+        var okNet = validateNet();
+        var okConsent = validateConsent();
+
+        if (!okNombre || !okOcc || !okEmail || !okNet || !okConsent) {
+            // Si hay error, reactivar botón inmediatamente
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Quiero mi Acceso Beta';
+            return;
+        }
+
+        // Simulación de envío exitoso
+        console.log('Lead registrado en DexFlow');
+        
+        // Finalización
+        form.reset();
+        clearAllErrors();
+        form.classList.add('hidden');
+        if (successEl) successEl.classList.remove('hidden');
     });
 
 });
