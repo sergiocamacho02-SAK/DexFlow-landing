@@ -311,8 +311,19 @@ body {
 
 /* Responsivo: el grid pasa a 1 columna en celulares */
 @media screen and (max-width: 768px) {
-    .form-grid {
-        grid-template-columns: 1fr;
+    /* 1. Reducir título hero para que no se desborde */
+    .hero__title { 
+        font-size: 2.5rem !important; 
+    }
+
+    /* 2. Ajustar padding del formulario para que respire */
+    .signup__wrapper { 
+        padding: 2rem !important; 
+    }
+
+    /* 3. Evitar el zoom automático en iOS al hacer clic en inputs */
+    .form__input, .form__select {
+        font-size: 16px !important; /* Mínimo 16px para evitar zoom de iOS */
     }
 }
 
