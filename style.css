@@ -8,6 +8,7 @@
     --color-dim: #A0ABC0;
     --glass: rgba(18, 21, 38, 0.6);
     --border: rgba(0, 229, 255, 0.15);
+    --color-error: #FF4545; /* Rojo para validaciones del formulario */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -217,7 +218,7 @@ body {
     gap: 10px; /* Espacio entre la imagen y el texto */
 }
 
-/* --- ESTILOS DEL FORMULARIO DEXFLOW (GRID Y VALIDACIÓN) --- */
+/* --- ESTILOS DEL FORMULARIO DEXFLOW (AJUSTADO CON VARIABLES) --- */
 
 /* Grid para el formulario (2 columnas en PC) */
 .form-grid {
@@ -240,7 +241,7 @@ body {
     width: 100%;
     padding: 10px 0;
     font-size: 1rem;
-    color: #ffffff;
+    color: var(--color-text-light);
     background: transparent;
     border: none;
     border-bottom: 2px solid rgba(255, 255, 255, 0.2);
@@ -252,7 +253,7 @@ body {
     position: absolute;
     top: 10px;
     left: 0;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--color-text-muted);
     font-size: 1rem;
     pointer-events: none;
     transition: 0.3s ease all;
@@ -263,18 +264,18 @@ body {
 .form__input:not(:placeholder-shown) ~ .form__label {
     top: -20px;
     font-size: 0.85rem;
-    color: #00E5FF;
+    color: var(--color-cyan);
     font-weight: 600;
 }
 
 .form__input:focus {
-    border-bottom: 2px solid #00E5FF;
+    border-bottom: 2px solid var(--color-cyan);
 }
 
 /* Estilos para los mensajes de error */
 .error-msg {
     font-size: 0.75rem;
-    color: #FF4545; /* Rojo de alerta */
+    color: var(--color-error); 
     position: absolute;
     left: 0;
     bottom: -1.25rem;
@@ -287,24 +288,24 @@ body {
 
 /* Borde rojo cuando hay error */
 .input-error {
-    border-bottom-color: #FF4545 !important;
+    border-bottom-color: var(--color-error) !important;
 }
 
 .input-error ~ .form__label {
-    color: #FF4545 !important;
+    color: var(--color-error) !important;
 }
 
 /* Personalización del Checkbox */
 .form__check input[type="checkbox"] {
     width: 1.2rem;
     height: 1.2rem;
-    accent-color: #00E5FF;
+    accent-color: var(--color-cyan);
     cursor: pointer;
     margin-top: 2px;
 }
 
 .form__check input[type="checkbox"].input-error {
-    outline: 2px solid #FF4545;
+    outline: 2px solid var(--color-error);
     outline-offset: 2px;
 }
 
