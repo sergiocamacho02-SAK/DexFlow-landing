@@ -332,3 +332,16 @@ body {
     cursor: not-allowed;
     filter: grayscale(1);
 }
+/* --- ENFOQUE LUXURY: GLOW & PULSE PARA ERRORES --- */
+
+/* Cuando el campo tiene error, hacemos un pulso sutil en el borde */
+@keyframes pulse-error {
+    0% { box-shadow: 0 0 0 0 rgba(255, 69, 69, 0.4); }
+    50% { box-shadow: 0 0 8px 2px rgba(255, 69, 69, 0.2); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 69, 69, 0.4); }
+}
+
+.input-error {
+    border-bottom-color: var(--color-error) !important;
+    animation: pulse-error 1.5s infinite;
+}
