@@ -1,9 +1,29 @@
+// ==========================================================================
+// 1. CONFIGURACIÓN E INICIALIZACIÓN DE FIREBASE
+// ==========================================================================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAFvzr-JaYuFrrlbipgLvtGw3dKnzSSNrw",
+    authDomain: "dexflow-2fa4a.firebaseapp.com",
+    projectId: "dexflow-2fa4a",
+    storageBucket: "dexflow-2fa4a.firebasestorage.app",
+    messagingSenderId: "855597653867",
+    appId: "1:855597653867:web:2208ef294208ef0821762e"
+};
+
+// Inicializamos Firebase y Firestore
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app); 
+
+// ==========================================================================
+// 2. LÓGICA DEL DOM Y FUNCIONALIDAD DE LA PÁGINA
+// ==========================================================================
 document.addEventListener('DOMContentLoaded', function () {
     'use strict';
 
-    /* ==========================================================================
-       1. SMOOTH SCROLL (Tu código original conservado)
-       ========================================================================== */
+    /* --- SMOOTH SCROLL --- */
     const btnPrimary = document.querySelector('.btn--primary');
     if (btnPrimary) {
         btnPrimary.addEventListener('click', (e) => {
@@ -12,9 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* ==========================================================================
-       2. LÓGICA DE VALIDACIÓN PROFESIONAL DEXFLOW
-       ========================================================================== */
+    /* --- VARIABLES DEL FORMULARIO --- */
     var form = document.getElementById('leadForm');
     var successEl = document.getElementById('success');
 
@@ -28,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+    /* --- FUNCIONES AUXILIARES DE ERROR --- */
     function getErrorEl(field) {
         return form.querySelector('.error-msg[data-field="' + field + '"]');
     }
@@ -58,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
         clearFieldError(consentInput, 'consent');
     }
 
+    /* --- FUNCIONES DE VALIDACIÓN --- */
     function validateNombre() {
         var value = (nombreInput.value || '').trim();
         if (value.length === 0) {
@@ -111,33 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return true;
     }
 
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        if (successEl) successEl.classList.add('hidden');
-
-        var okNombre = validateNombre();
-        var okOcc = validateOccupation();
-        var okEmail = validateEmail();
-        var okNet = validateNet();
-        var okConsent = validateConsent();
-
-        if (!okNombre || !okOcc || !okEmail || !okNet || !okConsent) {
-            return;
-        }
-
-        // Si todo está correcto
-        console.log('Lead registrado en DexFlow');
-        form.reset();
-        clearAllErrors();
-
-        // Ocultar formulario y mostrar éxito
-        form.classList.add('hidden');
-        if (successEl) {
-            successEl.classList.remove('hidden');
-        }
-    });
-
-    // Validación en tiempo real al escribir
+    /* --- VALIDACIÓN EN TIEMPO REAL --- */
     function errorVisible(field) {
         var el = getErrorEl(field);
         return el && !el.classList.contains('hidden');
@@ -149,11 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
     netSelect.addEventListener('change', function () { if (errorVisible('net')) validateNet(); });
     consentInput.addEventListener('change', function () { if (errorVisible('consent')) validateConsent(); });
 
-    /* ==========================================================================
-       3. PERSISTENCIA CON LOCALSTORAGE (Commit 7)
-       ========================================================================== */
-
-    // Función para guardar cuando el usuario escribe
+    /* --- PERSISTENCIA CON LOCALSTORAGE --- */
     function autoSave() {
         localStorage.setItem('dexflow_name', nombreInput.value);
         localStorage.setItem('dexflow_occ', occInput.value);
@@ -170,17 +160,20 @@ document.addEventListener('DOMContentLoaded', function () {
     occInput.addEventListener('input', autoSave);
     emailInput.addEventListener('input', autoSave);
 
-    // Limpiar localStorage al enviar el formulario exitosamente
-    form.addEventListener('submit', function (e) {
+    // ==========================================================================
+    // 3. ENVÍO MAESTRO A FIREBASE
+    // ==========================================================================
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
         
-        // 1. Desactivar botón y cambiar texto
+        // 1. Estado "Cargando" del botón
         var submitBtn = form.querySelector('.btn--submit');
         submitBtn.disabled = true;
         submitBtn.textContent = 'Procesando...';
 
         if (successEl) successEl.classList.add('hidden');
 
+        // 2. Validar todos los campos
         var okNombre = validateNombre();
         var okOcc = validateOccupation();
         var okEmail = validateEmail();
@@ -188,20 +181,34 @@ document.addEventListener('DOMContentLoaded', function () {
         var okConsent = validateConsent();
 
         if (!okNombre || !okOcc || !okEmail || !okNet || !okConsent) {
-            // Si hay error, reactivar botón inmediatamente
             submitBtn.disabled = false;
             submitBtn.textContent = 'Quiero mi Acceso Beta';
             return;
         }
 
-        // Simulación de envío exitoso
-        //console.log('Lead registrado en DexFlow');
-        
-        // Finalización
-        form.reset();
-        clearAllErrors();
-        form.classList.add('hidden');
-        if (successEl) successEl.classList.remove('hidden');
-    });
+        // 3. Conexión con Firebase
+        try {
+            await addDoc(collection(db, "leads"), {
+                nombre: nombreInput.value,
+                ocupacion: occInput.value,
+                email: emailInput.value,
+                nivel_capital: netSelect.value,
+                fecha_registro: new Date()
+            });
 
+            // 4. Acciones si todo sale bien
+            localStorage.clear(); 
+            form.reset(); 
+            clearAllErrors();
+            
+            form.classList.add('hidden');
+            if (successEl) successEl.classList.remove('hidden');
+
+        } catch (error) {
+            console.error("Error guardando en base de datos:", error);
+            alert("Hubo un error al procesar tu solicitud. Intenta de nuevo.");
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Quiero mi Acceso Beta';
+        }
+    });
 });
