@@ -216,3 +216,101 @@ body {
     align-items: center;
     gap: 10px; /* Espacio entre la imagen y el texto */
 }
+
+/* --- ESTILOS DEL FORMULARIO DEXFLOW (GRID Y VALIDACIÓN) --- */
+
+/* Grid para el formulario (2 columnas en PC) */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+/* Efecto de Etiquetas Flotantes */
+.form__group.floating {
+    position: relative;
+}
+
+.form__input {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 1rem;
+    color: #ffffff;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.form__label {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1rem;
+    pointer-events: none;
+    transition: 0.3s ease all;
+}
+
+/* El texto sube cuando escribes o haces clic */
+.form__input:focus ~ .form__label,
+.form__input:not(:placeholder-shown) ~ .form__label {
+    top: -20px;
+    font-size: 0.85rem;
+    color: #00E5FF;
+    font-weight: 600;
+}
+
+.form__input:focus {
+    border-bottom: 2px solid #00E5FF;
+}
+
+/* Estilos para los mensajes de error */
+.error-msg {
+    font-size: 0.75rem;
+    color: #FF4545; /* Rojo de alerta */
+    position: absolute;
+    left: 0;
+    bottom: -1.25rem;
+    font-weight: 600;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Borde rojo cuando hay error */
+.input-error {
+    border-bottom-color: #FF4545 !important;
+}
+
+.input-error ~ .form__label {
+    color: #FF4545 !important;
+}
+
+/* Personalización del Checkbox */
+.form__check input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: #00E5FF;
+    cursor: pointer;
+    margin-top: 2px;
+}
+
+.form__check input[type="checkbox"].input-error {
+    outline: 2px solid #FF4545;
+    outline-offset: 2px;
+}
+
+/* Responsivo: el grid pasa a 1 columna en celulares */
+@media screen and (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
