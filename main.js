@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Simulación de envío exitoso
-        console.log('Lead registrado en DexFlow');
+        //console.log('Lead registrado en DexFlow');
         
         // Finalización
         form.reset();
